@@ -60,8 +60,11 @@ function gatewayClient(host, appKey, appSecret) {
 
     function searchViaTunnelOnHost(host, tunnel, image) {
         return Q.promise(function(resolve, reject) {
-            var searchTunnel = 'ws://' + host + '/services/recognize/' + tunnel;
-            var ws = new websocket(searchTunnel);
+            const searchTunnel = `ws://${host}/services/recognize/${tunnel}`;
+            const ws = new websocket(searchTunnel, {
+                perMessageDeflate: false,
+                maxPayload: 100 * 1024 * 1024
+            });
             ws.on('open', function() {
                 ws.send(msgpack.encode(image), function(err) {
                     if (err) reject(err);
